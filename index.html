@@ -3,217 +3,470 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>lerpy</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --white: #f0ece4;
+  --black: #080808;
+  --gray: #888;
+  --accent: #e8e0d0;
 }
 
-html,body{
-    width:100%;
-    height:100%;
+html, body {
+  width: 100%; height: 100%;
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Space Mono', monospace;
+  overflow-x: hidden;
 }
 
-body{
-    background:#000;
-    color:#fff;
-    font-family:'Inter',sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-    position:relative;
+/* ── HALFTONE BACKGROUND ── */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* soft glow */
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    background: radial-gradient(circle at top, rgba(255,255,255,.10), transparent 55%);
-    pointer-events:none;
+/* ── VIGNETTE ── */
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.85) 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* subtle noise */
-body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-    opacity:.03;
-    pointer-events:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* ── MANGA BANNER ── */
+.banner {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  overflow: hidden;
+  background: var(--black);
 }
 
-.card{
-    width:min(92%,520px);
-    background:rgba(255,255,255,.03);
-    border:1px solid rgba(255,255,255,.08);
-    backdrop-filter:blur(22px);
-    border-radius:30px;
-    padding:50px 40px;
-    text-align:center;
-    animation:appear .9s cubic-bezier(.22,1,.36,1);
+/* SVG manga eyes rendered inline */
+.banner svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: contrast(1.6) brightness(0.9);
 }
 
-/* profile */
-.profile{
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    object-fit:cover;
-    border:1px solid rgba(255,255,255,.18);
-    box-shadow:0 0 70px rgba(255,255,255,.10);
-    margin-bottom:22px;
-    animation:float 6s ease-in-out infinite;
+.banner img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: contrast(1.15) brightness(0.85);
 }
 
-/* name */
-h1{
-    font-size:3.6rem;
-    font-weight:800;
-    letter-spacing:-2px;
-    margin-bottom:8px;
-    text-transform:lowercase;
+/* scan-line overlay */
+.banner::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,.18) 3px,
+    rgba(0,0,0,.18) 4px
+  );
+  pointer-events: none;
 }
 
-/* tagline */
-.tagline{
-    color:#a0a0a0;
-    font-size:.95rem;
-    margin-bottom:18px;
-    letter-spacing:.3px;
+/* glitch edge */
+.banner::before {
+  content: "";
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(to top, var(--black), transparent);
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* status */
-.status{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:7px 14px;
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:999px;
-    color:#cfcfcf;
-    font-size:.75rem;
-    margin-bottom:28px;
+/* ── LAYOUT ── */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.dot{
-    width:7px;
-    height:7px;
-    border-radius:50%;
-    background:#fff;
-    animation:pulse 2s infinite;
+/* ── PROFILE ROW ── */
+.profile-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  padding: 0 24px;
+  margin-top: -54px;
+  position: relative;
+  z-index: 5;
 }
 
-/* socials */
-.socials{
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    flex-wrap:wrap;
+.avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
 }
 
-.socials a{
-    color:#fff;
-    text-decoration:none;
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.08);
-    padding:11px 16px;
-    border-radius:12px;
-    font-size:.85rem;
-    transition:.25s;
+.avatar {
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--black);
+  display: block;
+  background: #1a1a1a;
+  /* fallback placeholder */
 }
 
-.socials a:hover{
-    transform:translateY(-3px);
-    background:rgba(255,255,255,.12);
+/* glitch ring */
+.avatar-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.3);
+  animation: spin 8s linear infinite;
 }
 
-/* music button */
-.music{
-    position:fixed;
-    bottom:22px;
-    right:22px;
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.10);
-    background:rgba(255,255,255,.04);
-    backdrop-filter:blur(20px);
-    color:#fff;
-    cursor:pointer;
-    transition:.25s;
-    font-size:1rem;
+.avatar-wrap::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255,255,255,.1);
+  animation: spin 14s linear infinite reverse;
 }
 
-.music:hover{
-    transform:scale(1.1);
+.name-block {
+  padding-bottom: 10px;
 }
 
-audio{ display:none; }
-
-/* animations */
-@keyframes appear{
-    from{opacity:0; transform:translateY(28px);}
-    to{opacity:1; transform:translateY(0);}
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  letter-spacing: 3px;
+  line-height: 1;
+  color: var(--white);
+  text-shadow: 3px 3px 0 rgba(255,255,255,.08);
+  position: relative;
+  display: inline-block;
 }
 
-@keyframes float{
-    0%,100%{transform:translateY(0px);}
-    50%{transform:translateY(-10px);}
+/* glitch text effect */
+h1::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 2px;
+  color: rgba(255, 80, 80, 0.4);
+  clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+  animation: glitch-1 4s infinite;
 }
 
-@keyframes pulse{
-    0%,100%{opacity:1;}
-    50%{opacity:.25;}
+h1::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: -2px;
+  color: rgba(80, 200, 255, 0.3);
+  clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%);
+  animation: glitch-2 4s infinite;
 }
+
+/* ── INFO SECTION ── */
+.info {
+  padding: 20px 24px 0;
+}
+
+.tagline {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  color: var(--gray);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.tagline span {
+  color: var(--white);
+}
+
+/* ── STATUS PILL ── */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 2px;
+  font-size: .7rem;
+  color: #aaa;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  background: rgba(255,255,255,.02);
+}
+
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, rgba(255,255,255,.2), transparent);
+  margin-bottom: 22px;
+}
+
+/* ── LINKS ── */
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 24px;
+}
+
+.link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  text-decoration: none;
+  color: var(--white);
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+  group: true;
+}
+
+.link-item::before {
+  content: "";
+  position: absolute;
+  left: -100%; top: 0; bottom: 0;
+  width: 100%;
+  background: rgba(255,255,255,.04);
+  transition: left .25s ease;
+}
+
+.link-item:hover::before { left: 0; }
+
+.link-item:hover { padding-left: 8px; }
+
+.link-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: .82rem;
+  letter-spacing: 1px;
+}
+
+.link-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,.2);
+  width: 24px;
+}
+
+.link-name {
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.link-sub {
+  font-size: .62rem;
+  color: var(--gray);
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.link-arrow {
+  font-size: .7rem;
+  color: rgba(255,255,255,.25);
+  transition: transform .2s, color .2s;
+}
+
+.link-item:hover .link-arrow {
+  transform: translateX(4px);
+  color: var(--white);
+}
+
+/* ── FOOTER ── */
+.footer {
+  padding: 32px 24px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-tag {
+  font-size: .6rem;
+  color: rgba(255,255,255,.15);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* ── MUSIC BTN ── */
+.music {
+  position: fixed;
+  bottom: 22px; right: 22px;
+  width: 46px; height: 46px;
+  border-radius: 2px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(8,8,8,.9);
+  backdrop-filter: blur(12px);
+  color: var(--white);
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  letter-spacing: 1px;
+  transition: .2s;
+  z-index: 99;
+}
+.music:hover { background: rgba(255,255,255,.08); }
+
+audio { display: none; }
+
+/* ── ANIMATIONS ── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50% { opacity:.2; }
+}
+
+@keyframes glitch-1 {
+  0%,90%,100% { clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%); transform: translateX(0); }
+  92% { clip-path: polygon(0 5%, 100% 5%, 100% 20%, 0 20%); transform: translateX(-3px); }
+  94% { clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%); transform: translateX(3px); }
+  96% { clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%); transform: translateX(0); }
+}
+
+@keyframes glitch-2 {
+  0%,88%,100% { clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%); transform: translateX(0); }
+  90% { clip-path: polygon(0 10%, 100% 10%, 100% 30%, 0 30%); transform: translateX(3px); }
+  93% { clip-path: polygon(0 50%, 100% 50%, 100% 65%, 0 65%); transform: translateX(-2px); }
+  95% { clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%); transform: translateX(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.page > * {
+  animation: fadeUp .7s cubic-bezier(.22,1,.36,1) both;
+}
+.banner { animation-delay: 0s; }
+.profile-row { animation-delay: .1s; }
+.info { animation-delay: .2s; }
+.links { animation-delay: .3s; }
+.footer { animation-delay: .4s; }
 
 /* mobile */
-@media(max-width:600px){
-    .card{padding:32px 26px;}
-    h1{font-size:2.8rem;}
-    .profile{width:100px;height:100px;}
+@media(max-width: 480px) {
+  .banner { height: 220px; }
+  .avatar { width: 86px; height: 86px; }
+  .footer-tag:last-child { display: none; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="card">
+<div class="page">
 
-    <img src="images/profile.png" class="profile" alt="lerpy">
+  <!-- BANNER: replace banner.png with your own image -->
+  <div class="banner">
+    <img src="images/banner.png" alt="banner">
+  </div>
 
-    <h1>lerpy</h1>
+  <!-- PROFILE ROW -->
+  <div class="profile-row">
+    <div class="avatar-wrap">
+      <img src="images/profile.png" class="avatar" alt="lerpy"
+           onerror="this.style.background='#1c1c1c'; this.style.display='flex'">
+    </div>
+    <div class="name-block">
+      <h1 data-text="lerpy">lerpy</h1>
+    </div>
+  </div>
 
+  <!-- INFO -->
+  <div class="info">
     <div class="tagline">
-        producer • designer • creator
+      <span>producer</span> • <span>designer</span> • <span>creator</span>
     </div>
-
     <div class="status">
-        <div class="dot"></div>
-        online
+      <div class="dot"></div>
+      online
     </div>
+    <div class="divider"></div>
+  </div>
 
-    <div class="socials">
-        <a href="https://twitter.com/batmantinoo" target="_blank">Twitter</a>
-        <a href="https://github.com/tinosgames" target="_blank">GitHub</a>
-        <a href="https://discord.com" target="_blank">Discord</a>
-    </div>
+  <!-- LINKS -->
+  <div class="links">
+    <a href="https://twitter.com/batmantinoo" target="_blank" class="link-item">
+      <div class="link-left">
+        <span class="link-num">01</span>
+        <div>
+          <div class="link-name">Twitter</div>
+          <div class="link-sub">@batmantinoo</div>
+        </div>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+
+    <a href="https://github.com/tinosgames" target="_blank" class="link-item">
+      <div class="link-left">
+        <span class="link-num">02</span>
+        <div>
+          <div class="link-name">GitHub</div>
+          <div class="link-sub">tinosgames</div>
+        </div>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+
+    <a href="https://discord.com" target="_blank" class="link-item">
+      <div class="link-left">
+        <span class="link-num">03</span>
+        <div>
+          <div class="link-name">Discord</div>
+          <div class="link-sub">join the server</div>
+        </div>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span class="footer-tag">lerpy © 2026</span>
+    <span class="footer-tag">producer • designer • creator</span>
+  </div>
 
 </div>
 
+<!-- MUSIC -->
 <button id="musicBtn" class="music">♫</button>
-
 <audio id="music" autoplay loop>
-    <source src="music/bg-music.mp3" type="audio/mpeg">
+  <source src="music/bg-music.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -221,20 +474,19 @@ const music = document.getElementById("music");
 const btn = document.getElementById("musicBtn");
 
 window.addEventListener("load", () => {
-    music.play().catch(() => {});
-    btn.textContent = "❚❚";
+  music.play().catch(() => {});
+  btn.textContent = "❚❚";
 });
 
 btn.addEventListener("click", () => {
-    if(music.paused){
-        music.play().catch(() => {});
-        btn.textContent = "❚❚";
-    } else {
-        music.pause();
-        btn.textContent = "♫";
-    }
+  if (music.paused) {
+    music.play().catch(() => {});
+    btn.textContent = "❚❚";
+  } else {
+    music.pause();
+    btn.textContent = "♫";
+  }
 });
 </script>
-
 </body>
 </html>
