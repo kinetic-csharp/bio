@@ -39,12 +39,7 @@ body::before{
     content:"";
     position:fixed;
     inset:0;
-
-    background:
-        radial-gradient(circle at top,
-        rgba(255,255,255,.08),
-        transparent 60%);
-
+    background: radial-gradient(circle at top, rgba(255,255,255,.08), transparent 60%);
     pointer-events:none;
 }
 
@@ -60,37 +55,23 @@ body::after{
 
 .card{
     width:min(90%,550px);
-
     background:rgba(255,255,255,.03);
-
     border:1px solid rgba(255,255,255,.08);
-
     backdrop-filter:blur(20px);
-
     border-radius:28px;
-
     padding:45px;
-
     text-align:center;
-
     animation:appear 1s cubic-bezier(.22,1,.36,1);
 }
 
 .profile{
     width:130px;
     height:130px;
-
     border-radius:50%;
-
     object-fit:cover;
-
     border:2px solid rgba(255,255,255,.15);
-
-    box-shadow:
-        0 0 60px rgba(255,255,255,.12);
-
+    box-shadow:0 0 60px rgba(255,255,255,.12);
     margin-bottom:25px;
-
     animation:float 5s ease-in-out infinite;
 }
 
@@ -111,17 +92,11 @@ h1{
     display:inline-flex;
     align-items:center;
     gap:8px;
-
     padding:8px 14px;
-
     border:1px solid rgba(255,255,255,.08);
-
     border-radius:999px;
-
     color:#bfbfbf;
-
     font-size:.8rem;
-
     margin-bottom:30px;
 }
 
@@ -143,21 +118,15 @@ h1{
 .socials a{
     color:#fff;
     text-decoration:none;
-
     background:rgba(255,255,255,.04);
-
     border:1px solid rgba(255,255,255,.08);
-
     padding:12px 18px;
-
     border-radius:12px;
-
     transition:.25s;
 }
 
 .socials a:hover{
     transform:translateY(-3px);
-
     background:rgba(255,255,255,.1);
 }
 
@@ -165,22 +134,14 @@ h1{
     position:fixed;
     bottom:25px;
     right:25px;
-
     width:50px;
     height:50px;
-
     border-radius:50%;
-
     border:1px solid rgba(255,255,255,.1);
-
     background:rgba(255,255,255,.04);
-
     backdrop-filter:blur(20px);
-
     color:white;
-
     cursor:pointer;
-
     transition:.25s;
 }
 
@@ -193,54 +154,28 @@ audio{
 }
 
 @keyframes appear{
-    from{
-        opacity:0;
-        transform:translateY(30px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+    from{opacity:0;transform:translateY(30px);}
+    to{opacity:1;transform:translateY(0);}
 }
 
 @keyframes float{
-    0%,100%{
-        transform:translateY(0px);
-    }
-
-    50%{
-        transform:translateY(-10px);
-    }
+    0%,100%{transform:translateY(0px);}
+    50%{transform:translateY(-10px);}
 }
 
 @keyframes pulse{
-    0%,100%{
-        opacity:1;
-    }
-
-    50%{
-        opacity:.3;
-    }
+    0%,100%{opacity:1;}
+    50%{opacity:.3;}
 }
 
 @media(max-width:600px){
-
-    .card{
-        padding:30px;
-    }
-
-    h1{
-        font-size:3rem;
-    }
-
-    .profile{
-        width:110px;
-        height:110px;
-    }
+    .card{padding:30px;}
+    h1{font-size:3rem;}
+    .profile{width:110px;height:110px;}
 }
 </style>
 </head>
+
 <body>
 
 <div class="card">
@@ -268,7 +203,7 @@ audio{
 
 <button id="musicBtn" class="music">♫</button>
 
-<audio id="music" loop>
+<audio id="music" autoplay loop>
     <source src="music/bg-music.mp3" type="audio/mpeg">
 </audio>
 
@@ -276,18 +211,17 @@ audio{
 const music = document.getElementById("music");
 const btn = document.getElementById("musicBtn");
 
+window.addEventListener("load", () => {
+    music.play().catch(() => {});
+    btn.textContent = "❚❚";
+});
+
 btn.addEventListener("click", () => {
-
     if(music.paused){
-
         music.play().catch(() => {});
-
         btn.textContent = "❚❚";
-
-    }else{
-
+    } else {
         music.pause();
-
         btn.textContent = "♫";
     }
 });
