@@ -1,577 +1,754 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>lerpy</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    <title>Kinetic</title>
+    <meta name="description" content="Kinetic's personal bio">
 
-:root {
-  --white: #f0ece4;
-  --black: #080808;
-  --gray: #888;
-  --accent: #e8e0d0;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-html, body {
-  width: 100%; height: 100%;
-  background: var(--black);
-  color: var(--white);
-  font-family: 'Space Mono', monospace;
-  overflow-x: hidden;
-}
+        :root {
+            --bg: #050008;
+            --card: rgba(13, 5, 18, 0.82);
+            --border: rgba(168, 85, 247, 0.18);
+            --purple: #a855f7;
+            --purple-light: #c084fc;
+            --text: #ffffff;
+            --muted: #9b8fa3;
+        }
 
-/* ── HALFTONE BACKGROUND ── */
-body::before {
-  content: "";
-  position: fixed; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,.07) 1px, transparent 1px);
-  background-size: 22px 22px;
-  pointer-events: none;
-  z-index: 0;
-}
+        html {
+            scroll-behavior: smooth;
+        }
 
-/* ── VIGNETTE ── */
-body::after {
-  content: "";
-  position: fixed; inset: 0;
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.85) 100%);
-  pointer-events: none;
-  z-index: 0;
-}
+        body {
+            min-height: 100vh;
 
-/* ── MANGA BANNER ── */
-.banner {
-  position: relative;
-  width: 100%;
-  height: 340px;
-  overflow: hidden;
-  background: var(--black);
-}
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-/* SVG manga eyes rendered inline */
-.banner svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  filter: contrast(1.6) brightness(0.9);
-}
+            padding: 30px 15px;
 
-.banner img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  filter: contrast(1.15) brightness(0.85);
-}
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
 
-/* scan-line overlay */
-.banner::after {
-  content: "";
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 3px,
-    rgba(0,0,0,.18) 3px,
-    rgba(0,0,0,.18) 4px
-  );
-  pointer-events: none;
-}
+            color: var(--text);
 
-/* glitch edge */
-.banner::before {
-  content: "";
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 80px;
-  background: linear-gradient(to top, var(--black), transparent);
-  z-index: 2;
-  pointer-events: none;
-}
+            background:
+                radial-gradient(
+                    circle at 50% -10%,
+                    rgba(168, 85, 247, 0.24),
+                    transparent 40%
+                ),
+                radial-gradient(
+                    circle at 0% 100%,
+                    rgba(126, 34, 206, 0.12),
+                    transparent 35%
+                ),
+                #050008;
 
-/* ── LAYOUT ── */
-.page {
-  position: relative;
-  z-index: 1;
-  max-width: 720px;
-  margin: 0 auto;
-}
+            overflow-x: hidden;
+        }
 
-/* ── PROFILE ROW ── */
-.profile-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 20px;
-  padding: 0 24px;
-  margin-top: -54px;
-  position: relative;
-  z-index: 5;
-}
+        body::before {
+            content: "";
 
-.avatar-wrap {
-  position: relative;
-  flex-shrink: 0;
-}
+            position: fixed;
+            inset: 0;
 
-.avatar {
-  width: 108px;
-  height: 108px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--black);
-  display: block;
-  background: #1a1a1a;
-  /* fallback placeholder */
-}
+            background-image:
+                linear-gradient(
+                    rgba(168, 85, 247, 0.035) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(168, 85, 247, 0.035) 1px,
+                    transparent 1px
+                );
 
-/* glitch ring */
-.avatar-wrap::before {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,.3);
-  animation: spin 8s linear infinite;
-}
+            background-size: 45px 45px;
 
-.avatar-wrap::after {
-  content: "";
-  position: absolute;
-  inset: -9px;
-  border-radius: 50%;
-  border: 1px dashed rgba(255,255,255,.1);
-  animation: spin 14s linear infinite reverse;
-}
+            mask-image: linear-gradient(
+                to bottom,
+                rgba(0,0,0,1),
+                rgba(0,0,0,0)
+            );
 
-.name-block {
-  padding-bottom: 10px;
-}
+            pointer-events: none;
+        }
 
-h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(3rem, 10vw, 5.5rem);
-  letter-spacing: 3px;
-  line-height: 1;
-  color: var(--white);
-  text-shadow: 3px 3px 0 rgba(255,255,255,.08);
-  position: relative;
-  display: inline-block;
-}
+        .glow {
+            position: fixed;
 
-/* glitch text effect */
-h1::before {
-  content: attr(data-text);
-  position: absolute;
-  top: 0; left: 2px;
-  color: rgba(255, 80, 80, 0.4);
-  clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
-  animation: glitch-1 4s infinite;
-}
+            width: 420px;
+            height: 420px;
 
-h1::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0; left: -2px;
-  color: rgba(80, 200, 255, 0.3);
-  clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%);
-  animation: glitch-2 4s infinite;
-}
+            top: -180px;
+            left: 50%;
 
-/* ── INFO SECTION ── */
-.info {
-  padding: 20px 24px 0;
-}
+            transform: translateX(-50%);
 
-.tagline {
-  font-family: 'Space Mono', monospace;
-  font-size: .75rem;
-  color: var(--gray);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
+            background: rgba(168, 85, 247, 0.13);
 
-.tagline span {
-  color: var(--white);
-}
+            filter: blur(110px);
 
-/* ── STATUS PILL ── */
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 12px 5px 10px;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 2px;
-  font-size: .7rem;
-  color: #aaa;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 28px;
-  background: rgba(255,255,255,.02);
-}
+            border-radius: 50%;
 
-.dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #fff;
-  animation: pulse 2s ease-in-out infinite;
-}
+            pointer-events: none;
+        }
 
-/* ── DIVIDER ── */
-.divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(to right, rgba(255,255,255,.2), transparent);
-  margin-bottom: 22px;
-}
+        .glow-bottom {
+            position: fixed;
 
-/* ── LINKS ── */
-.links {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 0 24px;
-}
+            width: 300px;
+            height: 300px;
 
-.link-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  text-decoration: none;
-  color: var(--white);
-  transition: all .2s;
-  position: relative;
-  overflow: hidden;
-  group: true;
-}
+            bottom: -180px;
+            right: -100px;
 
-.link-item::before {
-  content: "";
-  position: absolute;
-  left: -100%; top: 0; bottom: 0;
-  width: 100%;
-  background: rgba(255,255,255,.04);
-  transition: left .25s ease;
-}
+            background: rgba(126, 34, 206, 0.10);
 
-.link-item:hover::before { left: 0; }
+            filter: blur(100px);
 
-.link-item:hover { padding-left: 8px; }
+            border-radius: 50%;
 
-.link-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-size: .82rem;
-  letter-spacing: 1px;
-}
+            pointer-events: none;
+        }
 
-.link-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem;
-  color: rgba(255,255,255,.2);
-  width: 24px;
-}
+        /* =========================
+           PROFILE CONTENT
+        ========================= */
 
-.link-name {
-  font-weight: 700;
-  font-size: .78rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
+        .container {
+            width: 100%;
+            max-width: 520px;
 
-.link-sub {
-  font-size: .62rem;
-  color: var(--gray);
-  letter-spacing: 1px;
-  margin-top: 2px;
-}
+            position: relative;
+            z-index: 2;
 
-.link-arrow {
-  font-size: .7rem;
-  color: rgba(255,255,255,.25);
-  transition: transform .2s, color .2s;
-}
+            transition:
+                filter 0.8s ease,
+                transform 0.8s ease;
+        }
 
-.link-item:hover .link-arrow {
-  transform: translateX(4px);
-  color: var(--white);
-}
+        .container.locked {
+            filter: blur(18px);
+            transform: scale(1.025);
+        }
 
-/* ── FOOTER ── */
-.footer {
-  padding: 32px 24px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+        .card {
+            padding: 38px 32px;
 
-.footer-tag {
-  font-size: .6rem;
-  color: rgba(255,255,255,.15);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-}
+            text-align: center;
 
-/* ── MUSIC PLAYER ── */
-.player {
-  position: fixed;
-  bottom: 22px; right: 22px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  background: rgba(8,8,8,.92);
-  border: 1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(18px);
-  border-radius: 2px;
-  z-index: 99;
-  animation: fadeUp .6s .5s cubic-bezier(.22,1,.36,1) both;
-}
+            background: var(--card);
 
-.play-btn {
-  width: 34px; height: 34px;
-  border-radius: 2px;
-  border: 1px solid rgba(255,255,255,.2);
-  background: transparent;
-  color: var(--white);
-  cursor: pointer;
-  font-size: .85rem;
-  transition: .2s;
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-.play-btn:hover { background: rgba(255,255,255,.1); }
+            border: 1px solid var(--border);
 
-.player-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
+            border-radius: 28px;
 
-.track-name {
-  font-family: 'Space Mono', monospace;
-  font-size: .6rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--white);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
-}
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
 
-.progress-wrap {
-  width: 140px;
-  height: 2px;
-  background: rgba(255,255,255,.12);
-  cursor: pointer;
-  position: relative;
-}
+            box-shadow:
+                0 30px 100px rgba(0, 0, 0, 0.75),
+                0 0 60px rgba(168, 85, 247, 0.06),
+                inset 0 1px 0 rgba(255,255,255,0.035);
 
-.progress-bar {
-  height: 100%;
-  width: 0%;
-  background: var(--white);
-  transition: width .1s linear;
-  pointer-events: none;
-}
+            animation: enter 0.7s cubic-bezier(.2,.8,.2,1);
+        }
 
-.vol-btn {
-  width: 28px; height: 28px;
-  border: none;
-  background: transparent;
-  color: rgba(255,255,255,.35);
-  cursor: pointer;
-  font-size: .8rem;
-  transition: .2s;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.vol-btn:hover { color: var(--white); }
+        @keyframes enter {
+            from {
+                opacity: 0;
+                transform: translateY(25px) scale(0.97);
+            }
 
-audio { display: none; }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
 
-/* ── ANIMATIONS ── */
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+        /* =========================
+           PROFILE
+        ========================= */
 
-@keyframes pulse {
-  0%,100% { opacity:1; }
-  50% { opacity:.2; }
-}
+        .profile-wrapper {
+            position: relative;
 
-@keyframes glitch-1 {
-  0%,90%,100% { clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%); transform: translateX(0); }
-  92% { clip-path: polygon(0 5%, 100% 5%, 100% 20%, 0 20%); transform: translateX(-3px); }
-  94% { clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%); transform: translateX(3px); }
-  96% { clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%); transform: translateX(0); }
-}
+            width: 125px;
+            height: 125px;
 
-@keyframes glitch-2 {
-  0%,88%,100% { clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%); transform: translateX(0); }
-  90% { clip-path: polygon(0 10%, 100% 10%, 100% 30%, 0 30%); transform: translateX(3px); }
-  93% { clip-path: polygon(0 50%, 100% 50%, 100% 65%, 0 65%); transform: translateX(-2px); }
-  95% { clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%); transform: translateX(0); }
-}
+            margin: 0 auto 22px;
+        }
 
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(20px); }
-  to { opacity:1; transform:translateY(0); }
-}
+        .profile {
+            width: 125px;
+            height: 125px;
 
-.page > * {
-  animation: fadeUp .7s cubic-bezier(.22,1,.36,1) both;
-}
-.banner { animation-delay: 0s; }
-.profile-row { animation-delay: .1s; }
-.info { animation-delay: .2s; }
-.links { animation-delay: .3s; }
-.footer { animation-delay: .4s; }
+            object-fit: cover;
 
-/* mobile */
-@media(max-width: 480px) {
-  .banner { height: 220px; }
-  .avatar { width: 86px; height: 86px; }
-  .footer-tag:last-child { display: none; }
-}
-</style>
+            border-radius: 50%;
+
+            border: 3px solid var(--purple-light);
+
+            box-shadow:
+                0 0 0 8px rgba(168, 85, 247, 0.06),
+                0 0 35px rgba(168, 85, 247, 0.28),
+                0 20px 50px rgba(0,0,0,0.7);
+
+            display: block;
+        }
+
+        .online {
+            position: absolute;
+
+            width: 19px;
+            height: 19px;
+
+            right: 4px;
+            bottom: 7px;
+
+            background: #5bea75;
+
+            border: 4px solid #0d0710;
+
+            border-radius: 50%;
+
+            box-shadow: 0 0 15px rgba(91,234,117,0.55);
+        }
+
+        .name {
+            font-size: 34px;
+
+            font-weight: 800;
+
+            letter-spacing: -1.5px;
+
+            line-height: 1;
+
+            text-shadow:
+                0 0 25px rgba(168, 85, 247, 0.25);
+        }
+
+        .username {
+            margin-top: 9px;
+
+            color: var(--purple-light);
+
+            font-size: 14px;
+
+            letter-spacing: 0.2px;
+        }
+
+        .bio {
+            max-width: 390px;
+
+            margin: 22px auto 25px;
+
+            color: #b9aebe;
+
+            font-size: 15px;
+
+            line-height: 1.7;
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 8px 14px;
+
+            margin-bottom: 27px;
+
+            color: #b8a9c0;
+
+            font-size: 12px;
+
+            border-radius: 999px;
+
+            background: rgba(168, 85, 247, 0.055);
+
+            border: 1px solid rgba(168, 85, 247, 0.15);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #5bea75;
+
+            box-shadow: 0 0 10px #5bea75;
+        }
+
+        /* =========================
+           LINKS
+        ========================= */
+
+        .links {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 11px;
+        }
+
+        .link {
+            min-height: 55px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 0 20px;
+
+            color: #fff;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(168, 85, 247, 0.045),
+                    rgba(255,255,255,0.025)
+                );
+
+            border: 1px solid var(--border);
+
+            border-radius: 15px;
+
+            transition:
+                transform .2s ease,
+                background .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .link:hover {
+            transform: translateY(-3px);
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(168, 85, 247, 0.16),
+                    rgba(168, 85, 247, 0.06)
+                );
+
+            border-color: rgba(168, 85, 247, 0.42);
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.3),
+                0 0 20px rgba(168, 85, 247, 0.08);
+        }
+
+        .icon {
+            margin-right: 9px;
+
+            color: var(--purple-light);
+
+            opacity: .85;
+
+            font-size: 15px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            margin-top: 26px;
+
+            color: #5f5265;
+
+            font-size: 11px;
+
+            letter-spacing: .3px;
+        }
+
+        /* =========================
+           MUSIC BUTTON
+        ========================= */
+
+        .music-control {
+            position: fixed;
+
+            right: 22px;
+            bottom: 22px;
+
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+
+            background: rgba(13, 5, 18, 0.9);
+
+            border: 1px solid rgba(168, 85, 247, 0.3);
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            font-size: 17px;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transition:
+                opacity .5s ease,
+                transform .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
+
+            z-index: 10;
+        }
+
+        body.entered .music-control {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .music-control:hover {
+            transform: scale(1.08);
+
+            border-color: rgba(168, 85, 247, 0.65);
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.4),
+                0 0 25px rgba(168,85,247,0.2);
+        }
+
+        /* =========================
+           CLICK TO ENTER OVERLAY
+        ========================= */
+
+        .enter-screen {
+            position: fixed;
+
+            inset: 0;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-direction: column;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(30, 8, 45, 0.55),
+                    rgba(3, 0, 6, 0.92)
+                );
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+
+            cursor: pointer;
+
+            z-index: 100;
+
+            transition:
+                opacity .8s ease,
+                visibility .8s ease;
+        }
+
+        .enter-screen.hidden {
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+        }
+
+        .enter-text {
+            color: white;
+
+            font-size: 18px;
+
+            font-weight: 600;
+
+            letter-spacing: .3px;
+
+            text-shadow:
+                0 0 25px rgba(168, 85, 247, 0.65);
+
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .enter-subtext {
+            margin-top: 10px;
+
+            color: #8e789a;
+
+            font-size: 12px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: .55;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 520px) {
+            body {
+                padding: 18px 12px;
+            }
+
+            .card {
+                padding: 32px 20px;
+
+                border-radius: 23px;
+            }
+
+            .profile,
+            .profile-wrapper {
+                width: 110px;
+                height: 110px;
+            }
+
+            .name {
+                font-size: 29px;
+            }
+
+            .bio {
+                font-size: 14px;
+            }
+
+            .music-control {
+                right: 15px;
+                bottom: 15px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="page">
+    <div class="glow"></div>
+    <div class="glow-bottom"></div>
 
-  <!-- BANNER: replace banner.png with your own image -->
-  <div class="banner">
-    <img src="images/banner.jpg" alt="banner">
-  </div>
+    <!-- Background Music -->
+    <audio
+        id="bgMusic"
+        src="music/bg-music.mp3"
+        loop
+        preload="auto"
+    ></audio>
 
-  <!-- PROFILE ROW -->
-  <div class="profile-row">
-    <div class="avatar-wrap">
-      <img src="images/profile.png" class="avatar" alt="lerpy"
-           onerror="this.style.background='#1c1c1c'; this.style.display='flex'">
-    </div>
-    <div class="name-block">
-      <h1 data-text="lerpy">lerpy</h1>
-    </div>
-  </div>
+    <!-- Click To Enter -->
+    <div class="enter-screen" id="enterScreen">
 
-  <!-- INFO -->
-  <div class="info">
-    <div class="tagline">
-      <span>producer</span> • <span>designer</span> • <span>creator</span>
-    </div>
-    <div class="status">
-      <div class="dot"></div>
-      online
-    </div>
-    <div class="divider"></div>
-  </div>
-
-  <!-- LINKS -->
-  <div class="links">
-    <a href="https://twitter.com/batmantinoo" target="_blank" class="link-item">
-      <div class="link-left">
-        <span class="link-num">01</span>
-        <div>
-          <div class="link-name">Twitter</div>
-          <div class="link-sub">@batmantinoo</div>
+        <div class="enter-text">
+            Click to view profile
         </div>
-      </div>
-      <span class="link-arrow">→</span>
-    </a>
 
-    <a href="https://github.com/lerpyypluh" target="_blank" class="link-item">
-      <div class="link-left">
-        <span class="link-num">02</span>
-        <div>
-          <div class="link-name">GitHub</div>
-          <div class="link-sub">lerpyypluh</div>
+        <div class="enter-subtext">
+            Click anywhere to continue
         </div>
-      </div>
-      <span class="link-arrow">→</span>
-    </a>
 
-    <a href="https://discord.com" target="_blank" class="link-item">
-      <div class="link-left">
-        <span class="link-num">03</span>
-        <div>
-          <div class="link-name">Discord</div>
-          <div class="link-sub">join the server</div>
-        </div>
-      </div>
-      <span class="link-arrow">→</span>
-    </a>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <span class="footer-tag">lerpy © 2026</span>
-    <span class="footer-tag">producer • designer • creator</span>
-  </div>
-
-</div>
-
-<!-- MUSIC PLAYER -->
-<div class="player">
-  <button class="play-btn" id="playBtn">▶</button>
-  <div class="player-info">
-    <div class="track-name" id="trackName">bg-music</div>
-    <div class="progress-wrap" id="progressWrap">
-      <div class="progress-bar" id="progressBar"></div>
     </div>
-  </div>
-  <button class="vol-btn" id="volBtn">♪</button>
-</div>
 
-<audio id="music" loop>
-  <source src="music/bg-music.mp3" type="audio/mpeg">
-</audio>
+    <!-- Music Control -->
+    <button
+        class="music-control"
+        id="musicButton"
+        aria-label="Toggle music"
+        title="Toggle music"
+    >
+        ♫
+    </button>
 
-<script>
-const music = document.getElementById("music");
-const playBtn = document.getElementById("playBtn");
-const progressBar = document.getElementById("progressBar");
-const progressWrap = document.getElementById("progressWrap");
-const volBtn = document.getElementById("volBtn");
+    <!-- Profile -->
+    <main class="container locked" id="profile">
 
-playBtn.addEventListener("click", () => {
-  if (music.paused) {
-    music.play().catch(() => {});
-    playBtn.textContent = "❚❚";
-  } else {
-    music.pause();
-    playBtn.textContent = "▶";
-  }
-});
+        <section class="card">
 
-music.addEventListener("timeupdate", () => {
-  if (!music.duration) return;
-  progressBar.style.width = (music.currentTime / music.duration * 100) + "%";
-});
+            <div class="profile-wrapper">
 
-progressWrap.addEventListener("click", (e) => {
-  if (!music.duration) return;
-  const rect = progressWrap.getBoundingClientRect();
-  music.currentTime = ((e.clientX - rect.left) / rect.width) * music.duration;
-});
+                <img
+                    src="images/profile.png"
+                    alt="Kinetic"
+                    class="profile"
+                >
 
-let muted = false;
-volBtn.addEventListener("click", () => {
-  muted = !muted;
-  music.muted = muted;
-  volBtn.style.color = muted ? "rgba(255,255,255,.15)" : "";
-});
-</script>
+                <div class="online"></div>
+
+            </div>
+
+            <h1 class="name">Kinetic</h1>
+
+            <p class="username">@n9pu</p>
+
+            <p class="bio">
+                Developer, creator, and builder.
+                Making things on the internet and probably
+                breaking a few along the way.
+            </p>
+
+            <div class="status">
+                <span class="status-dot"></span>
+                Currently online
+            </div>
+
+            <div class="links">
+
+                <a
+                    class="link"
+                    href="https://github.com/kinetic-csharp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="icon">⌘</span>
+                    GitHub
+                </a>
+
+                <a
+                    class="link"
+                    href="https://discord.com/users/792576219785986090"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="icon">◈</span>
+                    Discord
+                </a>
+
+                <a
+                    class="link"
+                    href="#"
+                >
+                    <span class="icon">↗</span>
+                    Website
+                </a>
+
+                <a
+                    class="link"
+                    href="#"
+                >
+                    <span class="icon">✉</span>
+                    Contact
+                </a>
+
+            </div>
+
+            <div class="footer">
+                © 2026 Kinetic
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        const enterScreen = document.getElementById("enterScreen");
+        const profile = document.getElementById("profile");
+        const music = document.getElementById("bgMusic");
+        const musicButton = document.getElementById("musicButton");
+
+        let entered = false;
+
+        function enterProfile() {
+            if (entered) return;
+
+            entered = true;
+
+            /*
+             * Start music from the user's interaction.
+             * This avoids the browser autoplay restriction.
+             */
+            music.volume = 0.5;
+
+            music.play()
+                .then(() => {
+                    musicButton.textContent = "♫";
+                })
+                .catch(() => {
+                    musicButton.textContent = "♪";
+                });
+
+            /*
+             * Remove blur.
+             */
+            profile.classList.remove("locked");
+
+            /*
+             * Show profile.
+             */
+            document.body.classList.add("entered");
+
+            /*
+             * Remove overlay.
+             */
+            enterScreen.classList.add("hidden");
+        }
+
+        enterScreen.addEventListener("click", enterProfile);
+
+        enterScreen.addEventListener("touchstart", enterProfile, {
+            passive: true
+        });
+
+        musicButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+
+            if (music.paused) {
+                music.play()
+                    .then(() => {
+                        musicButton.textContent = "♫";
+                    })
+                    .catch(() => {});
+            } else {
+                music.pause();
+
+                musicButton.textContent = "♪";
+            }
+        });
+    </script>
+
 </body>
 </html>
+```
